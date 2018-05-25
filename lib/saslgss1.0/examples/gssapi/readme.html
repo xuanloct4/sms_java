@@ -1,0 +1,244 @@
+<html>
+
+<HEAD>
+
+  <TITLE>JNDI/LDAP with SASL GSSAPI/Kerberos v5 Example</TITLE>
+
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT=#000000 LINK=#0000ff VLINK=#000077 ALINK=#ff0000>
+
+<center>
+
+<h1>An Example of Using JNDI/LDAP with a SASL GSSAPI/Kerberos v5 Driver</h1>
+
+</center>
+<hr>
+
+
+<!-- Body text begins here -->
+
+
+This page describes a sample JNDI program for accessing an LDAP
+directory using the SASL GSSAPI/Kerberos v5 authentication.
+SASL is Simple Authentication and Security Layer. It is used by the
+<a href=http://www.ietf.org/rfc/rfc2251>LDAP v3 (RFC 2251)</a>
+for authentication.  SASL and the
+GSSAPI/Kerberos V5 SASL mechanism are described in the Internet 
+<a href=http://www.ietf.org/rfc/rfc2251>RFC 2222</a>.
+
+<h4>Server Requirements</h4>
+
+This example works only against LDAP servers that support the GSSAPI
+SASL mechanism. You can find the SASL mechanisms that are supported by an LDAP
+server by examining its root DSE entry.
+Microsoft's Active Directory is an example of an LDAP server that
+supports the GSSAPI SASL mechanism. Following are instructions
+to enable GSSAPI support in Active Directory.
+<ol>
+<li>Use Active Directory's administration tool to set up support for
+Kerberos.
+<li>Create a Kerberos user (e.g., <tt>"testuser@test.imc.org"</tt>).
+<li>Configure the user's account to <em>not</em> require Kerberos
+pre-authentication.
+</ol>
+
+<h4>Client Requirements</h4>
+
+To use this example, you must have the binary code for the 
+GSSAPI SASL mechanism available in your classpath or installed in the
+<tt>jre/lib/ext</tt> directory of your Java runtime.  The source for a sample
+implementation of the GSSAPI SASL mechanism is provided along with this example.
+(See <a href=#MECH>discussion later on this page</a>.)
+The GSSAPI SASL mechanism needs a GSSAPI/Kerberos implemenation.
+The sample GSSAPI SASL mechanism that comes with this example uses the
+<a href=http://security.dstc.edu.au/projects/java/jcsi.html>Java 
+Crypto and Security Implementation (JCSI) 1.0 beta 1</a>.
+<p>
+Follow the GSSAPI/Kerberos package's instructions for
+installation and configuration. Then 
+configure the package to use the same Kerberos KDC used by Active Directory.
+<p>
+To use this example, you must use the 
+<a href=http://java.sun.com/products/jndi/#download>JNDI/LDAP 1.2.2</a> service provider.
+This example does not work with
+the LDAP provider that's in <a href=http://java.sun.com/j2se/1.3/docs/guide/jndi/>the
+Java 2 SDK, v1.3</a>; it will work with a future maintenance release
+of that product.
+<h4>Compilation</h4>
+
+The source to this example is in <a href=GssGetattrs.java>GssGetattrs.java</a>.
+<p>
+To set up this example so that it works in your environment, you need
+to modify some fields in the 
+<a href=Env.java><tt>Env.java</tt></a> file.  For example, you probably
+need to change <tt>Env.MY_SERVICE</tt> to point to your LDAP server and port
+number.
+<p>
+After you have made these changes, compile the <tt>.java</tt> files to generate
+corresponding <tt>.class</tt> files. You need the
+<a href=http://java.sun.com/products/jdk/1.2>Java 2 Platform, v1.2</a> or higher.
+<blockquote><pre>
+# javac Env.java GssGetattrs.java
+</pre></blockquote>
+
+
+<h4>Execution</h4>
+Following are the steps for running this example.
+<ol>
+<li>
+Login to Kerberos as the user that you created in the server setup
+(e.g., <tt>"testuser@test.imc.org"</tt>).  This is the equivalent of 
+<tt>kinit</tt>.
+How you login to Kerberos depends on the GSSAPI/Kerberos package/system
+that you're using.
+<li>
+Ensure that your classpath includes the JNDI classes (<tt>jndi.jar</tt>),
+the classes for the LDAP provider (
+<tt>ldap.jar</tt>, <tt>providerutil.jar</tt>,
+<tt>ldapbp.jar</tt>, <tt>jaas.jar</tt>), the classes for the 
+GSSAPI SASL mechanism,
+the classes for the Java GSSAPI/Kerberos implementation
+(e.g., <tt>jcsi.jar</tt> if you're using the sample implementation), 
+and the classes of the example.
+<li>
+Specify the package that your GSSAPI SASL mechanism is in
+via the <tt>"javax.security.sasl.client.pkgs"</tt> property.
+</ol>
+Here are examples of the command lines if you're using JCSI and the
+the sample implementation of the GSSAPI SASL mechanism from 
+this example.
+<blockquote><pre>
+# java jKinit testuser@test.imc.org
+<enter password>
+
+# java -Djavax.security.sasl.client.pkgs=com.sun.security.sasl.gsskerb GssGetattrs
+</blockquote></pre>
+
+<a name=MECH><h2>GSSAPI/Kerberos SASL Mechanism</h2></a>
+
+The
+<a href=../../com/sun/security/sasl/gsskerb/><tt>com.sun.security.sasl.gsskerb</tt></a>
+package contains the
+client and server implementations of the
+GSSAPI SASL mechanism for Kerberos v5,
+as described in the Internet
+<a href=http://www.ietf.org/rfc/rfc2251>RFC 2222</a>
+and the Internet-draft
+<tt>draft-ietf-cat-sasl-gssapi-00.txt</tt>.
+
+<h4>Java GSSAPI/Kerberos</h4>
+<p>
+The sample implementations depend on the 
+<a href=http://security.dstc.edu.au/projects/java/jcsi.html>Java 
+Crypto and Security Implementation (JCSI) 1.0 beta 1</a>.
+The JCSI contains an implementation of the Java GSSAPI as described in
+<tt>draft-ietf-cat-gssv2-javabind-00.txt</tt>. It is straightforward to
+substitute JCSI with another Java GSSAPI implementation.
+To do this, make the
+appropriate <tt>import</tt> statement changes and update the GSSAPI calls
+to that implemented by the Java GSSAPI implementation that you are using.
+
+<h4>Java SASL API</h4>
+The sample implementation uses the Java SASL API,
+<a href="http://www.ietf.org/internet-drafts/draft-weltman-java-sasl-03.txt">draft-weltman-java-sasl-03</a></td>.
+To use the client implementation, set the 
+<tt>"javax.security.sasl.client.pkgs"</tt> property to
+the package name, <tt>"com.sun.security.sasl.gsskerb"</tt>.
+For the JNDI/LDAP example, you only need to use the client implementation.
+To use the server implementation, set the 
+<tt>"javax.security.sasl.server.pkgs"</tt> property to
+the package name, <tt>"com.sun.security.sasl.gsskerb"</tt>.
+<p>
+
+<h4>Implementation Overview</h4>
+The client mechanism is implemented by the
+<a href=../../com/sun/security/sasl/gsskerb/GssKerberosV5.java><tt>GssKerberosV5</tt></a> class.
+It follows RFC 2222, with some minor tweaks to make it work with
+Active Directory and JCSI.
+It uses 
+the <a href=../../com/sun/security/sasl/gsskerb/GssKerberosUtil.java><tt>GssKerberosUtil</tt></a> class
+for utility methods common to both client and server implementations.
+The <a href=../../com/sun/security/sasl/gsskerb/ClientFactory.java><tt>ClientFactory</tt></a> class
+is responsible for creating an instance of <tt>GssKerberosV5</tt>.
+The client implementation has been successfully tested against Active Directory.
+<p>
+The server mechanism is implemented by the
+<a href=../../com/sun/security/sasl/gsskerb/GssKerberosV5Srv.java><tt>GssKerberosV5Srv</tt></a> class.
+It uses 
+the <a href=../../com/sun/security/sasl/gsskerb/GssKerberosUtil.java><tt>GssKerberosUtil</tt></a> class
+for utility methods common to both client and server implementations.
+The <a href=../../com/sun/security/sasl/gsskerb/ServerFactory.java><tt>ServerFactory</tt></a> class
+is responsible for creating an instance of <tt>GssKerberosV5Srv</tt>.
+The server implementation has not been tested and is provided 
+as an example only.
+
+<h4>Creating the Binaries</h4>
+
+You create the class files for the GSSAPI/Kerberos SASL mechanism
+by compiling the <tt>.java</tt> files in the
+<a href=../../com/sun/security/sasl/gsskerb/><tt>com/sun/security/sasl/gsskerb</tt> directory</a>.
+Ensure that you have <tt>jcsi.jar</tt> in your classpath.
+
+
+
+
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+
+
+<TABLE BORDER="0" WIDTH=100%>
+
+<TR VALIGN=TOP>
+
+
+
+<TD>
+
+<P><FONT SIZE="-2">
+
+   <A HREF="/products/jdk/1.2/docs/relnotes/SMICopyright.html">Copyright &#169;</A> 2000
+
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+
+    All Rights Reserved.</FONT></P>
+
+   <FONT SIZE="-1">
+
+   Please send comments to: <a href="mailto:jndi@java.sun.com">jndi@java.sun.com</a> 
+
+   </FONT>
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT>
+
+
+   <BR>
+
+   <FONT SIZE="+1">
+
+   <i>Java Software</i>
+
+   </FONT>
+
+</TD>
+
+
+
+</TR>
+
+</TABLE>
+
+
+
+</BODY>
+
+</HTML>

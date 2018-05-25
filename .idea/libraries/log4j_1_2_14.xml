@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="log4j-1.2.14">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jsmpp-2.1.0/lib/log4j-1.2.14.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsmpp-2.1.0/lib/slf4j-api-1.4.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsmpp-2.1.0/lib/slf4j-log4j12-1.4.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsmpp-2.1.0/lib/testng-5.7-jdk15.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/misc/SMSServer/Interfaces/Interfaces.iml" filepath="$PROJECT_DIR$/misc/SMSServer/Interfaces/Interfaces.iml" />
+      <module fileurl="file://$PROJECT_DIR$/misc/misc.iml" filepath="$PROJECT_DIR$/misc/misc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/smslib-v3-master.iml" filepath="$PROJECT_DIR$/src/smslib-v3-master.iml" />
+    </modules>
+  </component>
+</project>
